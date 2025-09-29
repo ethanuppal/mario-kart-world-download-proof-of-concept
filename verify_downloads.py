@@ -15,8 +15,11 @@ def fetch_expected_songs():
         response.raise_for_status()
         html = response.text
         
+        # Split the page to exclude the "Remixes / Fanmade" section
+        main_songs_section = html.split("Remixes / Fanmade")[0] if "Remixes / Fanmade" in html else html
+        
         song_pattern = r'<tr id="s(\d+)">\s*<td[^>]*><a href="/song/\d+">([^<]+)</a>'
-        matches = re.findall(song_pattern, html)
+        matches = re.findall(song_pattern, main_songs_section)
         
         songs = []
         for song_id, song_name in matches:
@@ -71,10 +74,10 @@ def verify_downloads():
     print(f"Expected songs: {len(expected_songs)}")
     print(f"Downloaded files: {len(downloaded_files)}")
     
-    if len(expected_songs) == len(downloaded_files) == 268:
-        print("\n✅ COUNT VERIFICATION: PASSED - Exactly 268 songs downloaded!")
+    if len(expected_songs) == len(downloaded_files) == 267:
+        print("\n✅ COUNT VERIFICATION: PASSED - Exactly 267 songs downloaded (excluding fan remixes)!")
     else:
-        print(f"\n❌ COUNT VERIFICATION: FAILED - Expected 268, got {len(downloaded_files)}")
+        print(f"\n❌ COUNT VERIFICATION: FAILED - Expected 267, got {len(downloaded_files)}")
     
     if missing:
         print(f"\n⚠️  Missing files ({len(missing)}):")
@@ -115,13 +118,13 @@ def verify_downloads():
     
     # Final verdict
     print("\n" + "=" * 50)
-    if len(downloaded_files) == 268 and not missing and not extra and not small_files:
+    if len(downloaded_files) == 267 and not missing and not extra and not small_files:
         print("✅ FINAL VERDICT: ALL CHECKS PASSED! 🎉")
-        print("All 268 Mario Kart World songs downloaded successfully!")
+        print("All 267 Mario Kart World songs downloaded successfully (excluding fan remixes)!")
     else:
         print("⚠️  FINAL VERDICT: Some issues detected")
-        if len(downloaded_files) != 268:
-            print(f"  - Wrong count: {len(downloaded_files)} instead of 268")
+        if len(downloaded_files) != 267:
+            print(f"  - Wrong count: {len(downloaded_files)} instead of 267")
         if missing:
             print(f"  - Missing files: {len(missing)}")
         if extra:

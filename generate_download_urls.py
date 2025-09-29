@@ -15,8 +15,11 @@ def fetch_song_data():
         response.raise_for_status()
         html = response.text
         
+        # Split the page to exclude the "Remixes / Fanmade" section
+        main_songs_section = html.split("Remixes / Fanmade")[0] if "Remixes / Fanmade" in html else html
+        
         song_pattern = r'<tr id="s(\d+)">\s*<td[^>]*><a href="/song/\d+">([^<]+)</a>'
-        matches = re.findall(song_pattern, html)
+        matches = re.findall(song_pattern, main_songs_section)
         
         songs = []
         for song_id, song_name in matches:
@@ -28,7 +31,7 @@ def fetch_song_data():
                 'download_url': f"https://smashcustommusic.net/brstm/{song_id}"
             })
         
-        print(f"Found {len(songs)} songs")
+        print(f"Found {len(songs)} songs (excluding fan remixes)")
         return songs
         
     except Exception as e:
